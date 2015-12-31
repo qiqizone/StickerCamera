@@ -1,21 +1,21 @@
 package com.stickercamera.app.camera.ui;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.GridView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +29,6 @@ import com.customview.LabelView;
 import com.customview.MyHighlightView;
 import com.customview.MyImageViewDrawableOverlay;
 import com.github.skykai.stickercamera.R;
-import com.imagezoom.ImageViewTouch;
 import com.stickercamera.App;
 import com.stickercamera.AppConstants;
 import com.stickercamera.app.camera.CameraBaseActivity;
@@ -40,6 +39,7 @@ import com.stickercamera.app.camera.adapter.StickerToolAdapter;
 import com.stickercamera.app.camera.effect.FilterEffect;
 import com.stickercamera.app.camera.util.EffectUtil;
 import com.stickercamera.app.camera.util.GPUImageFilterTools;
+import com.stickercamera.app.camera.util.GetTextImage;
 import com.stickercamera.app.model.Addon;
 import com.stickercamera.app.model.FeedItem;
 import com.stickercamera.app.model.TagItem;
@@ -73,10 +73,22 @@ public class PhotoProcessActivity extends CameraBaseActivity {
     //底部按钮
     @InjectView(R.id.sticker_btn)
     TextView stickerBtn;
+    @InjectView(R.id.biaoqing1)
+    TextView biaoqing1;
+    @InjectView(R.id.biaoqing2)
+    TextView biaoqing2;
     @InjectView(R.id.filter_btn)
     TextView filterBtn;
     @InjectView(R.id.text_btn)
     TextView labelBtn;
+    @InjectView(R.id.save_picture)
+    TextView save_picture;
+    @InjectView(R.id.txt_hand_draw)
+    TextView txt_hand_draw;
+    @InjectView(R.id.biaoqing)
+    TextView txt_biaoqing;
+    @InjectView(R.id.biaoqing_layout)
+    RelativeLayout biaoqing_layout;
     //工具区
     @InjectView(R.id.list_tools)
     HListView bottomToolBar;
@@ -99,6 +111,7 @@ public class PhotoProcessActivity extends CameraBaseActivity {
     //标签区域
     private View commonLabelArea;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,22 +120,22 @@ public class PhotoProcessActivity extends CameraBaseActivity {
         EffectUtil.clear();
         initView();
         initEvent();
-        initStickerToolBar();
-
+        //initStickerToolBar();//去除会在初始界面显示贴纸
         ImageUtils.asyncLoadImage(this, getIntent().getData(), new ImageUtils.LoadImageCallback() {
             @Override
             public void callback(Bitmap result) {
-                currentBitmap = result;
+                //currentBitmap = result;
+                currentBitmap = ImageUtils.decodeBitmapWithOrientationMax(getIntent().getData().getPath(), App.getApp().getScreenWidth(), App.getApp().getScreenHeight());
                 mGPUImageView.setImage(currentBitmap);
             }
         });
 
-        ImageUtils.asyncLoadSmallImage(this, getIntent().getData(), new ImageUtils.LoadImageCallback() {
-            @Override
-            public void callback(Bitmap result) {
-                smallImageBackgroud = result;
-            }
-        });
+//        ImageUtils.asyncLoadSmallImage(this, getIntent().getData(), new ImageUtils.LoadImageCallback() {
+//            @Override
+//            public void callback(Bitmap result) {
+//                smallImageBackgroud = result;
+//            }
+//        });
 
     }
     private void initView() {
@@ -131,12 +144,13 @@ public class PhotoProcessActivity extends CameraBaseActivity {
                 R.layout.view_drawable_overlay, null);
         mImageView = (MyImageViewDrawableOverlay) overlay.findViewById(R.id.drawable_overlay);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(App.getApp().getScreenWidth(),
-                App.getApp().getScreenWidth());
+                App.getApp().getScreenHeight());
         mImageView.setLayoutParams(params);
         overlay.setLayoutParams(params);
         drawArea.addView(overlay);
+
         //添加标签选择器
-        RelativeLayout.LayoutParams rparams = new RelativeLayout.LayoutParams(App.getApp().getScreenWidth(), App.getApp().getScreenWidth());
+        RelativeLayout.LayoutParams rparams = new RelativeLayout.LayoutParams(App.getApp().getScreenWidth(), App.getApp().getScreenHeight());
         labelSelector = new LabelSelector(this);
         labelSelector.setLayoutParams(rparams);
         drawArea.addView(labelSelector);
@@ -153,13 +167,13 @@ public class PhotoProcessActivity extends CameraBaseActivity {
                 mImageView.getWidth() / 2, mImageView.getWidth() / 2);
         emptyLabelView.setVisibility(View.INVISIBLE);
 
-        //初始化推荐标签栏
-        commonLabelArea = LayoutInflater.from(PhotoProcessActivity.this).inflate(
-                R.layout.view_label_bottom,null);
-        commonLabelArea.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
-        toolArea.addView(commonLabelArea);
-        commonLabelArea.setVisibility(View.GONE);
+//        //初始化推荐标签栏
+//        commonLabelArea = LayoutInflater.from(PhotoProcessActivity.this).inflate(
+//                R.layout.view_label_bottom,null);
+//        commonLabelArea.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+//                ViewGroup.LayoutParams.MATCH_PARENT));
+//        toolArea.addView(commonLabelArea);
+//        commonLabelArea.setVisibility(View.GONE);
     }
 
     private void initEvent() {
@@ -170,7 +184,7 @@ public class PhotoProcessActivity extends CameraBaseActivity {
             bottomToolBar.setVisibility(View.VISIBLE);
             labelSelector.hide();
             emptyLabelView.setVisibility(View.GONE);
-            commonLabelArea.setVisibility(View.GONE);
+//            commonLabelArea.setVisibility(View.GONE);
             initStickerToolBar();
         });
 
@@ -178,20 +192,23 @@ public class PhotoProcessActivity extends CameraBaseActivity {
             if (!setCurrentBtn(filterBtn)) {
                 return;
             }
+            biaoqing_layout.setVisibility(View.INVISIBLE);
             bottomToolBar.setVisibility(View.VISIBLE);
             labelSelector.hide();
             emptyLabelView.setVisibility(View.INVISIBLE);
-            commonLabelArea.setVisibility(View.GONE);
+//            commonLabelArea.setVisibility(View.GONE);
             initFilterToolBar();
         });
+
         labelBtn.setOnClickListener(v -> {
-            if (!setCurrentBtn(labelBtn)) {
-                return;
-            }
+//            if (!setCurrentBtn(labelBtn)) {
+//                return;
+//            }
+            biaoqing_layout.setVisibility(View.INVISIBLE);
             bottomToolBar.setVisibility(View.GONE);
             labelSelector.showToTop();
-            commonLabelArea.setVisibility(View.VISIBLE);
-
+//            commonLabelArea.setVisibility(View.VISIBLE);
+            setCurrentBtn(labelBtn);
         });
         labelSelector.setTxtClicked(v -> {
             EditTextActivity.openTextEdit(PhotoProcessActivity.this,"",8, AppConstants.ACTION_EDIT_LABEL);
@@ -200,15 +217,17 @@ public class PhotoProcessActivity extends CameraBaseActivity {
             EditTextActivity.openTextEdit(PhotoProcessActivity.this,"",8, AppConstants.ACTION_EDIT_LABEL_POI);
 
         });
-        mImageView.setOnDrawableEventListener(wpEditListener);
-        mImageView.setSingleTapListener(()->{
-                emptyLabelView.updateLocation((int) mImageView.getmLastMotionScrollX(),
-                        (int) mImageView.getmLastMotionScrollY());
-                emptyLabelView.setVisibility(View.VISIBLE);
-
-                labelSelector.showToTop();
-                drawArea.postInvalidate();
-        });
+//        mImageView.setOnDrawableEventListener(wpEditListener);
+//        mImageView.setSingleTapListener(()->{
+//
+//                emptyLabelView.updateLocation((int) mImageView.getmLastMotionScrollX(),
+//                        (int) mImageView.getmLastMotionScrollY());
+//                emptyLabelView.setVisibility(View.VISIBLE);
+//
+//                labelSelector.showToTop();
+//                drawArea.postInvalidate();
+//
+//        });
         labelSelector.setOnClickListener(v -> {
             labelSelector.hide();
             emptyLabelView.updateLocation((int) labelSelector.getmLastTouchX(),
@@ -217,10 +236,63 @@ public class PhotoProcessActivity extends CameraBaseActivity {
         });
 
 
-        titleBar.setRightBtnOnclickListener(v -> {
+
+        save_picture.setOnClickListener(v -> {
             savePicture();
         });
+
+        txt_hand_draw.setOnClickListener(v ->{
+            biaoqing_layout.setVisibility(View.INVISIBLE);
+            bottomToolBar.setVisibility(View.INVISIBLE);
+            //添加手绘处理代码
+        });
+
+        txt_biaoqing.setOnClickListener(v ->{
+            labelSelector.hide();
+            biaoqing_layout.setVisibility(View.VISIBLE);
+            bottomToolBar.setVisibility(View.GONE);
+            setCurrentBtn(txt_biaoqing);
+        });
+
+        biaoqing1.setOnClickListener(v -> {
+            if (!setCurrentBtn(biaoqing1)) {
+                return;
+            }
+            bottomToolBar.setVisibility(View.VISIBLE);
+            labelSelector.hide();
+            emptyLabelView.setVisibility(View.GONE);
+//            commonLabelArea.setVisibility(View.GONE);
+            initStickerToolBar1();
+        });
+
+        biaoqing2.setOnClickListener(v -> {
+            if (!setCurrentBtn(biaoqing2)) {
+                return;
+            }
+            bottomToolBar.setVisibility(View.VISIBLE);
+            labelSelector.hide();
+            emptyLabelView.setVisibility(View.GONE);
+//            commonLabelArea.setVisibility(View.GONE);
+            initStickerToolBar2();
+        });
+
     }
+
+    /**
+     * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
+     */
+    public static int dip2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+     /**
+      * 根据手机的分辨率从 px(像素) 的单位 转成为 dp
+      */
+     public static int px2dip(Context context, float pxValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (pxValue / scale + 0.5f);
+     }
+
 
     //保存图片
     private void savePicture(){
@@ -228,15 +300,42 @@ public class PhotoProcessActivity extends CameraBaseActivity {
         final Bitmap newBitmap = Bitmap.createBitmap(mImageView.getWidth(), mImageView.getHeight(),
                 Bitmap.Config.ARGB_8888);
         Canvas cv = new Canvas(newBitmap);
+
         RectF dst = new RectF(0, 0, mImageView.getWidth(), mImageView.getHeight());
+
         try {
             cv.drawBitmap(mGPUImageView.capture(), null, dst, null);
+            
         } catch (InterruptedException e) {
             e.printStackTrace();
             cv.drawBitmap(currentBitmap, null, dst, null);
         }
+
         //加贴纸水印
         EffectUtil.applyOnSave(cv, mImageView);
+
+        //加文字
+
+        Paint paint = new Paint();
+        paint.setColor(Color.GREEN);
+        paint.setTextSize(dip2px(this,25));
+        paint.setTextAlign(Paint.Align.LEFT);
+        List<TagItem> tagInfoList = new ArrayList<TagItem>();
+        for (LabelView label : labels) {
+            tagInfoList.add(label.getTagInfo());
+        }
+        Paint.FontMetrics fontMetrics = paint.getFontMetrics();
+        float offY = -fontMetrics.top;
+        for(int i=0;i<tagInfoList.size();i++){
+            String orgStr = tagInfoList.get(i).getName();
+            float orgX = (float)tagInfoList.get(i).getX();
+            float orgY = (float)tagInfoList.get(i).getY();
+            float newY = orgY +offY;
+            float newX = orgX;
+            Log.d("aaa-x",tagInfoList.get(i).getX()+"");
+            Log.d("aaa-y",tagInfoList.get(i).getY()+"");
+            cv.drawText(orgStr, newX, newY, paint);
+        }
 
         new SavePicToFileTask().execute(newBitmap);
     }
@@ -256,7 +355,7 @@ public class PhotoProcessActivity extends CameraBaseActivity {
                 bitmap = params[0];
 
                 String picName = TimeUtils.dtFormat(new Date(), "yyyyMMddHHmmss");
-                 fileName = ImageUtils.saveToFile(FileUtils.getInst().getPhotoSavedPath() + "/"+ picName, false, bitmap);
+                 fileName = ImageUtils.saveToFile(FileUtils.getInst().getPhotoSavedPath(), true, bitmap);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -272,18 +371,6 @@ public class PhotoProcessActivity extends CameraBaseActivity {
             if (StringUtils.isEmpty(fileName)) {
                 return;
             }
-
-            //将照片信息保存至sharedPreference
-            //保存标签信息
-            List<TagItem> tagInfoList = new ArrayList<TagItem>();
-            for (LabelView label : labels) {
-                tagInfoList.add(label.getTagInfo());
-            }
-
-            //将图片信息通过EventBus发送到MainActivity
-            FeedItem feedItem = new FeedItem(tagInfoList,fileName);
-            EventBus.getDefault().post(feedItem);
-            CameraManager.getInst().close();
         }
     }
 
@@ -366,7 +453,51 @@ public class PhotoProcessActivity extends CameraBaseActivity {
         setCurrentBtn(stickerBtn);
     }
 
+    //初始化贴图
+    private void initStickerToolBar1(){
 
+        bottomToolBar.setAdapter(new StickerToolAdapter(PhotoProcessActivity.this, EffectUtil.addonList1));
+        bottomToolBar.setOnItemClickListener(new it.sephiroth.android.library.widget.AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(it.sephiroth.android.library.widget.AdapterView<?> arg0,
+                                    View arg1, int arg2, long arg3) {
+                labelSelector.hide();
+                Addon sticker = EffectUtil.addonList1.get(arg2);
+                EffectUtil.addStickerImage(mImageView, PhotoProcessActivity.this, sticker,
+                        new EffectUtil.StickerCallback() {
+                            @Override
+                            public void onRemoveSticker(Addon sticker) {
+                                labelSelector.hide();
+                            }
+                        });
+            }
+        });
+        setCurrentBtn(biaoqing1);
+    }
+
+    //初始化贴图
+    private void initStickerToolBar2(){
+
+        bottomToolBar.setAdapter(new StickerToolAdapter(PhotoProcessActivity.this, EffectUtil.addonList2));
+        bottomToolBar.setOnItemClickListener(new it.sephiroth.android.library.widget.AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(it.sephiroth.android.library.widget.AdapterView<?> arg0,
+                                    View arg1, int arg2, long arg3) {
+                labelSelector.hide();
+                Addon sticker = EffectUtil.addonList2.get(arg2);
+                EffectUtil.addStickerImage(mImageView, PhotoProcessActivity.this, sticker,
+                        new EffectUtil.StickerCallback() {
+                            @Override
+                            public void onRemoveSticker(Addon sticker) {
+                                labelSelector.hide();
+                            }
+                        });
+            }
+        });
+        setCurrentBtn(biaoqing2);
+    }
     //初始化滤镜
     private void initFilterToolBar(){
         final List<FilterEffect> filters = EffectService.getInst().getLocalFilters();

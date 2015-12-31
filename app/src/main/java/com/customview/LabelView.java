@@ -30,8 +30,8 @@ public class LabelView extends LinearLayout {
     private TagItem tagInfo = new TagItem();
     private float parentWidth = 0;
     private float parentHeight = 0;
-    private ImageView labelIcon;
-    private TextView labelTxtLeft;
+    //private ImageView labelIcon;
+    //private TextView labelTxtLeft;
     private TextView labelTxtRight;
 
     public TagItem getTagInfo() {
@@ -41,16 +41,16 @@ public class LabelView extends LinearLayout {
     public LabelView(Context context) {
         super(context);
         LayoutInflater.from(context).inflate(R.layout.view_label, this);
-        labelIcon = (ImageView) findViewById(R.id.label_icon);
-        labelTxtLeft = (TextView) findViewById(R.id.label_text_left);
+        //labelIcon = (ImageView) findViewById(R.id.label_icon);
+        //labelTxtLeft = (TextView) findViewById(R.id.label_text_left);
         labelTxtRight = (TextView) findViewById(R.id.label_text_right);
     }
 
     public LabelView(Context context, AttributeSet attr) {
         super(context, attr);
         LayoutInflater.from(context).inflate(R.layout.view_label, this);
-        labelIcon = (ImageView) findViewById(R.id.label_icon);
-        labelTxtLeft = (TextView) findViewById(R.id.label_text_left);
+        //labelIcon = (ImageView) findViewById(R.id.label_icon);
+        //labelTxtLeft = (TextView) findViewById(R.id.label_text_left);
         labelTxtRight = (TextView) findViewById(R.id.label_text_right);
     }
 
@@ -58,10 +58,10 @@ public class LabelView extends LinearLayout {
         tagInfo.setName(tagItem.getName());
         tagInfo.setId(tagItem.getId());
         tagInfo.setType(tagItem.getType());
-        labelTxtLeft.setText(tagItem.getName());
+        //labelTxtLeft.setText(tagItem.getName());
         labelTxtRight.setText(tagItem.getName());
         if (tagItem.getType() == AppConstants.POST_TYPE_POI) {
-            labelIcon.setImageResource(R.drawable.point_poi);
+            //labelIcon.setImageResource(R.drawable.point_poi);
         }
     }
 
@@ -81,12 +81,12 @@ public class LabelView extends LinearLayout {
         this.parentHeight = parentWidth;
         if (isLeft) {
             labelTxtRight.setVisibility(View.VISIBLE);
-            labelTxtLeft.setVisibility(View.GONE);
+            //labelTxtLeft.setVisibility(View.GONE);
             setupLocation(left, top);
             parent.addView(this);
         } else {
-            labelTxtRight.setVisibility(View.GONE);
-            labelTxtLeft.setVisibility(View.VISIBLE);
+            labelTxtRight.setVisibility(View.VISIBLE);
+            //labelTxtLeft.setVisibility(View.VISIBLE);
             setupLocation(left, top);
             parent.addView(this);
         }
@@ -101,9 +101,9 @@ public class LabelView extends LinearLayout {
      * @param top
      */
     public void addTo(ViewGroup parent, final int left, final int top) {
-        if (left > parent.getWidth() / 2) {
-            tagInfo.setLeft(false);
-        }
+//        if (left > parent.getWidth() / 2) {
+//            tagInfo.setLeft(false);
+//        }
         this.parentWidth = parent.getWidth();
         if (parentWidth <= 0) {
             parentWidth = App.getApp().getScreenWidth();
@@ -112,26 +112,26 @@ public class LabelView extends LinearLayout {
         this.parentHeight = parentWidth;
         if (emptyItem) {
             labelTxtRight.setVisibility(View.GONE);
-            labelTxtLeft.setVisibility(View.GONE);
+            //labelTxtLeft.setVisibility(View.GONE);
             setupLocation(left, top);
             parent.addView(this);
         } else if (tagInfo.isLeft()) {
             labelTxtRight.setVisibility(View.VISIBLE);
-            labelTxtLeft.setVisibility(View.GONE);
+            //labelTxtLeft.setVisibility(View.GONE);
             setupLocation(left, top);
             parent.addView(this);
         } else {
-            labelTxtRight.setVisibility(View.GONE);
-            labelTxtLeft.setVisibility(View.INVISIBLE);
-            setupLocation(20, 20);
+            labelTxtRight.setVisibility(View.VISIBLE);
+            //labelTxtLeft.setVisibility(View.INVISIBLE);
+            setupLocation(left, top);
             parent.addView(this);
 
             post(new Runnable() {
                 @Override
                 public void run() {
-                    int toLeft = left - getWidth() + labelIcon.getWidth();
+                    int toLeft = left - getWidth();
                     setupLocation(toLeft, top);
-                    labelTxtLeft.setVisibility(View.VISIBLE);
+                    labelTxtRight.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -148,8 +148,8 @@ public class LabelView extends LinearLayout {
         if (getImageWidth() - left - getWidth() < 0) {
             left = getImageWidth() - getWidth();
         }
-        if (getImageWidth() - top - getHeight() < 0) {
-            top = getImageWidth() - getHeight();
+        if (App.getApp().getScreenHeight() - top - getHeight() < 0) {
+            top = App.getApp().getScreenHeight() - getHeight();
         }
         if (left < 0 && top < 0) {
             params.addRule(RelativeLayout.CENTER_IN_PARENT);
@@ -163,8 +163,8 @@ public class LabelView extends LinearLayout {
             params.setMargins(left, top, 0, 0);
         }
 
-        tagInfo.setX(EffectUtil.getStandDis(left, this.parentWidth));
-        tagInfo.setY(EffectUtil.getStandDis(top, this.parentHeight));
+        tagInfo.setX(left);
+        tagInfo.setY(top);
         setLayoutParams(params);
     }
 
@@ -185,7 +185,7 @@ public class LabelView extends LinearLayout {
 
     public void setEmpty() {
         emptyItem = true;
-        labelTxtLeft.setVisibility(View.GONE);
+        //labelTxtLeft.setVisibility(View.GONE);
         labelTxtRight.setVisibility(View.GONE);
     }
 
@@ -200,13 +200,13 @@ public class LabelView extends LinearLayout {
         as.setDuration(ANIMATIONEACHOFFSET * 3);
         as.addAnimation(sa);
         as.addAnimation(aniAlp);
-        labelIcon.startAnimation(as);
+        //labelIcon.startAnimation(as);
     }
 
     public void updateLocation(int x, int y) {
         x = x < 0 ? 0 : x;
         y = y < 0 ? 0 : y;
         setupLocation(x, y);
-        wave();
+        //wave();
     }
 }

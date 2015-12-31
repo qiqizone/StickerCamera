@@ -66,9 +66,9 @@ public class CameraActivity extends CameraBaseActivity {
     private Camera.Parameters parameters = null;
     private Camera cameraInst = null;
     private Bundle bundle = null;
-    private int photoWidth = DistanceUtil.getCameraPhotoWidth();
-    private int photoNumber = 4;
-    private int photoMargin = App.getApp().dp2px(1);
+    //private int photoWidth = DistanceUtil.getCameraPhotoWidth();
+    //private int photoNumber = 4;
+    //private int photoMargin = App.getApp().dp2px(1);
     private float pointX, pointY;
     static final int FOCUS = 1;            // 聚焦
     static final int ZOOM = 2;            // 缩放
@@ -119,53 +119,53 @@ public class CameraActivity extends CameraBaseActivity {
         surfaceView.getHolder().addCallback(new SurfaceCallback());//为SurfaceView的句柄添加一个回调函数
 
         //设置相机界面,照片列表,以及拍照布局的高度(保证相机预览为正方形)
-        ViewGroup.LayoutParams layout = cameraGrid.getLayoutParams();
-        layout.height = App.getApp().getScreenWidth();
-        layout = photoArea.getLayoutParams();
-        layout.height = DistanceUtil.getCameraPhotoAreaHeight();
-        layout = takePhotoPanel.getLayoutParams();
-        layout.height = App.getApp().getScreenHeight()
-                - App.getApp().getScreenWidth()
-                - DistanceUtil.getCameraPhotoAreaHeight();
+//        ViewGroup.LayoutParams layout = cameraGrid.getLayoutParams();
+//        layout.height = App.getApp().getScreenWidth();
+//        layout = photoArea.getLayoutParams();
+//        layout.height = DistanceUtil.getCameraPhotoAreaHeight();
+//        layout = takePhotoPanel.getLayoutParams();
+//        layout.height = App.getApp().getScreenHeight()
+//                - App.getApp().getScreenWidth()
+//                - DistanceUtil.getCameraPhotoAreaHeight();
 
-        //添加系统相册内的图片
-        ArrayList<PhotoItem> sysPhotos = FileUtils.getInst().findPicsInDir(
-                FileUtils.getInst().getSystemPhotoPath());
-        int showNumber = sysPhotos.size() > photoNumber ? photoNumber
-                : sysPhotos.size();
-        for (int i = 0; i < showNumber; i++) {
-            addPhoto(sysPhotos.get(showNumber - 1 - i));
-        }
+//        //添加系统相册内的图片
+//        ArrayList<PhotoItem> sysPhotos = FileUtils.getInst().findPicsInDir(
+//                FileUtils.getInst().getSystemPhotoPath());
+//        int showNumber = sysPhotos.size() > photoNumber ? photoNumber
+//                : sysPhotos.size();
+//        for (int i = 0; i < showNumber; i++) {
+//            addPhoto(sysPhotos.get(showNumber - 1 - i));
+//        }
     }
 
-    private void addPhoto(PhotoItem photoItem) {
-        ImageView photo = new ImageView(this);
-        if (StringUtils.isNotBlank(photoItem.getImageUri())) {
-            ImageLoaderUtils.displayLocalImage(photoItem.getImageUri(), photo, null);
-        } else {
-            photo.setImageResource(R.drawable.default_img);
-        }
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                photoWidth, photoWidth);
-        params.leftMargin = photoMargin;
-        params.rightMargin = photoMargin;
-        params.gravity = Gravity.CENTER;
-        photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        photo.setTag(photoItem.getImageUri());
-
-        if (photoArea.getChildCount() >= photoNumber) {
-            photoArea.removeViewAt(photoArea.getChildCount() - 1);
-            photoArea.addView(photo, 0, params);
-        } else {
-            photoArea.addView(photo, 0, params);
-        }
-        photo.setOnClickListener(v -> {
-            if (v instanceof ImageView && v.getTag() instanceof String) {
-                CameraManager.getInst().processPhotoItem(CameraActivity.this,
-                        new PhotoItem((String) v.getTag(), System.currentTimeMillis()));
-            }
-        });
-    }
+//    private void addPhoto(PhotoItem photoItem) {
+//        ImageView photo = new ImageView(this);
+//        if (StringUtils.isNotBlank(photoItem.getImageUri())) {
+//            ImageLoaderUtils.displayLocalImage(photoItem.getImageUri(), photo, null);
+//        } else {
+//            photo.setImageResource(R.drawable.default_img);
+//        }
+//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+//                photoWidth, photoWidth);
+//        params.leftMargin = photoMargin;
+//        params.rightMargin = photoMargin;
+//        params.gravity = Gravity.CENTER;
+//        photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//        photo.setTag(photoItem.getImageUri());
+//
+//        if (photoArea.getChildCount() >= photoNumber) {
+//            photoArea.removeViewAt(photoArea.getChildCount() - 1);
+//            photoArea.addView(photo, 0, params);
+//        } else {
+//            photoArea.addView(photo, 0, params);
+//        }
+//        photo.setOnClickListener(v -> {
+//            if (v instanceof ImageView && v.getTag() instanceof String) {
+//                CameraManager.getInst().processPhotoItem(CameraActivity.this,
+//                        new PhotoItem((String) v.getTag(), System.currentTimeMillis()));
+//            }
+//        });
+//    }
 
     private void initEvent() {
         //拍照
@@ -247,6 +247,16 @@ public class CameraActivity extends CameraBaseActivity {
                 e.printStackTrace();
             }
             RelativeLayout.LayoutParams layout = new RelativeLayout.LayoutParams(focusIndex.getLayoutParams());
+          //控制聚焦框显示不超过边界
+//            if(pointX <= focus_view_size/2 && focus_view_size/2 < pointY && pointY < (float) App.getApp().getScreenWidth()){
+//                layout.setMargins(0, (int) (pointY-focus_view_size/2), 0, 0);
+//            }else if(pointX < focus_view_size/2 && pointY <= focus_view_size/2){
+//                layout.setMargins(0, 0, 0, 0);
+//            }else if(pointX > focus_view_size/2 && pointY > focus_view_size/2){
+//                layout.setMargins((int) (pointX-focus_view_size/2), (int) (pointY-focus_view_size/2), 0, 0);
+//            }else if(pointX > focus_view_size/2 && pointY <= focus_view_size/2){
+//                layout.setMargins((int) (pointX-focus_view_size/2), 0, 0, 0);
+//            }
             layout.setMargins((int) pointX - 60, (int) pointY - 60, 0, 0);
             focusIndex.setLayoutParams(layout);
             focusIndex.setVisibility(View.VISIBLE);
@@ -257,9 +267,9 @@ public class CameraActivity extends CameraBaseActivity {
             handler.postDelayed(() -> focusIndex.setVisibility(View.INVISIBLE), 800);
         });
 
-        takePhotoPanel.setOnClickListener(v -> {
-            //doNothing 防止聚焦框出现在拍照区域
-        });
+//        takePhotoPanel.setOnClickListener(v -> {
+//            //doNothing 防止聚焦框出现在拍照区域
+//        });
 
     }
 
@@ -365,7 +375,7 @@ public class CameraActivity extends CameraBaseActivity {
         private byte[] data;
 
         protected void onPreExecute() {
-            showProgressDialog("处理中");
+            //showProgressDialog("处理中");
         }
 
         ;
@@ -389,9 +399,9 @@ public class CameraActivity extends CameraBaseActivity {
             super.onPostExecute(result);
 
             if (StringUtils.isNotEmpty(result)) {
-                dismissProgressDialog();
-                    CameraManager.getInst().processPhotoItem(CameraActivity.this,
-                            new PhotoItem(result, System.currentTimeMillis()));
+                //dismissProgressDialog();
+                CameraManager.getInst().processPhotoItem(CameraActivity.this,
+                        new PhotoItem(result, System.currentTimeMillis()));
             } else {
                 toast("拍照失败，请稍后重试！", Toast.LENGTH_LONG);
             }
@@ -708,26 +718,34 @@ public class CameraActivity extends CameraBaseActivity {
 
         //获得图片大小
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeByteArray(data, 0, data.length, options);
-
-        PHOTO_SIZE = options.outHeight > options.outWidth ? options.outWidth : options.outHeight;
-        int height = options.outHeight > options.outWidth ? options.outHeight : options.outWidth;
-        options.inJustDecodeBounds = false;
-        Rect r;
+        //options.inJustDecodeBounds = true;
+        croppedImage = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        //旋转图片
+        Matrix m = new Matrix();
+        m.setRotate(90, options.outWidth / 2, options.outHeight / 2);
         if (mCurrentCameraId == 1) {
-            r = new Rect(height - PHOTO_SIZE, 0, height, PHOTO_SIZE);
-        } else {
-            r = new Rect(0, 0, PHOTO_SIZE, PHOTO_SIZE);
+            m.postScale(1, -1);
         }
-        try {
-            croppedImage = decodeRegionCrop(data, r);
-        } catch (Exception e) {
-            return null;
-        }
-        String imagePath = ImageUtils.saveToFile(FileUtils.getInst().getSystemPhotoPath(), true,
-                croppedImage);
-        croppedImage.recycle();
+        Bitmap rotatedImage = Bitmap.createBitmap(croppedImage, 0, 0, options.outWidth, options.outHeight, m, true);
+        if (rotatedImage != croppedImage)
+            croppedImage.recycle();
+//        PHOTO_SIZE = options.outHeight > options.outWidth ? options.outWidth : options.outHeight;
+//        int height = options.outHeight > options.outWidth ? options.outHeight : options.outWidth;
+//        options.inJustDecodeBounds = false;
+//        Rect r;
+//        if (mCurrentCameraId == 1) {
+//            r = new Rect(height - PHOTO_SIZE, 0, height, PHOTO_SIZE);
+//        } else {
+//            r = new Rect(0, 0, PHOTO_SIZE, PHOTO_SIZE);
+//        }
+//        try {
+//            croppedImage = decodeRegionCrop(data, r);
+//        } catch (Exception e) {
+//            return null;
+//        }
+        String imagePath = ImageUtils.saveToFile(FileUtils.getInst().getPhotoSavedPath(), true,
+                rotatedImage);
+        rotatedImage.recycle();
         return imagePath;
     }
 

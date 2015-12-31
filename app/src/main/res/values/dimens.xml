@@ -95,4 +95,6 @@
 
     <!-- camera -->
     <dimen name="wp_sample_corner">6dp</dimen>
+
+    <dimen name="focus_view_size">40dp</dimen>
 </resources>

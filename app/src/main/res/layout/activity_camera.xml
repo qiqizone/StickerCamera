@@ -20,7 +20,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@color/white"
             android:gravity="center_vertical"
             android:padding="2dp">
 
@@ -99,7 +98,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/photo_area"
-            android:layout_alignParentTop="true" />
+            android:layout_alignParentTop="true"
+            android:visibility="gone"/>
 
         <View
             android:id="@+id/focus_index"

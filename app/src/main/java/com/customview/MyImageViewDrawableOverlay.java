@@ -58,6 +58,8 @@ public class MyImageViewDrawableOverlay extends ImageViewTouch {
     //标签被点击的处与基本坐标的距离
     private float                   labelX, labelY, downLabelX, downLabelY;
 
+    private float x_end_move, y_end_move;
+
     /************************[BEGIN]贴纸处理**********************/
     /**
      * 用于感知label被点击了
@@ -99,7 +101,7 @@ public class MyImageViewDrawableOverlay extends ImageViewTouch {
         }
         if (currentLabel != null) {
             switch (event.getAction()) {
-                case MotionEvent.ACTION_UP:// 手指离开时 
+                case MotionEvent.ACTION_UP:// 手指离开时
                 case MotionEvent.ACTION_CANCEL:
 
                     float upX = event.getRawX();

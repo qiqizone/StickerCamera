@@ -32,6 +32,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class EffectUtil {
 
     public static List<Addon> addonList                 = new ArrayList<Addon>();
+    public static List<Addon> addonList1                 = new ArrayList<Addon>();
+    public static List<Addon> addonList2                 = new ArrayList<Addon>();
     private static List<MyHighlightView> hightlistViews = new CopyOnWriteArrayList<MyHighlightView>();
 
     static {
@@ -43,7 +45,26 @@ public class EffectUtil {
         addonList.add(new Addon(R.drawable.sticker6));
         addonList.add(new Addon(R.drawable.sticker7));
         addonList.add(new Addon(R.drawable.sticker8));
+
+        addonList1.add(new Addon(R.drawable.jgz1));
+        addonList1.add(new Addon(R.drawable.jgz2));
+        addonList1.add(new Addon(R.drawable.jgz3));
+        addonList1.add(new Addon(R.drawable.jgz4));
+        addonList1.add(new Addon(R.drawable.jgz5));
+        addonList1.add(new Addon(R.drawable.jgz6));
+        addonList1.add(new Addon(R.drawable.jgz7));
+        addonList1.add(new Addon(R.drawable.jgz8));
+
+        addonList2.add(new Addon(R.drawable.b1));
+        addonList2.add(new Addon(R.drawable.b2));
+        addonList2.add(new Addon(R.drawable.b3));
+        addonList2.add(new Addon(R.drawable.b4));
+        addonList2.add(new Addon(R.drawable.b5));
+        addonList2.add(new Addon(R.drawable.b6));
+        addonList2.add(new Addon(R.drawable.b7));
+        addonList2.add(new Addon(R.drawable.b8));
     }
+
 
     public static void clear() {
         hightlistViews.clear();
@@ -205,6 +226,7 @@ public class EffectUtil {
         }
     }
 
+
     private static void applyOnSave(Canvas mCanvas, ImageViewTouch processImage,MyHighlightView view) {
 
         if (view != null && view.getContent() instanceof StickerDrawable) {
@@ -227,5 +249,4 @@ public class EffectUtil {
             mCanvas.restoreToCount(saveCount);
         }
     }
-
 }

@@ -59,14 +59,14 @@ public class BaseActivity extends AppCompatActivity implements ActivityResponsab
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
-        titleBar = (CommonTitleBar) findViewById(R.id.title_layout);
-        if (titleBar != null)
-            titleBar.setLeftBtnOnclickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finish();
-                }
-            });
+//        titleBar = (CommonTitleBar) findViewById(R.id.title_layout);
+//        if (titleBar != null)
+//            titleBar.setLeftBtnOnclickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    finish();
+//                }
+//            });
     }
 
     /**

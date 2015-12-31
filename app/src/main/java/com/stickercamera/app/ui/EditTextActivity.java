@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.common.util.StringUtils;
+import com.customview.CommonTitleBar;
 import com.github.skykai.stickercamera.R;
 import com.stickercamera.AppConstants;
 import com.stickercamera.base.BaseActivity;
@@ -48,6 +49,16 @@ public class EditTextActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_text);
+
+        titleBar = (CommonTitleBar) findViewById(R.id.title_layout);
+        if (titleBar != null)
+            titleBar.setLeftBtnOnclickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+
         ButterKnife.inject(this);
         maxlength = getIntent().getIntExtra(AppConstants.PARAM_MAX_SIZE, MAX);
 

@@ -13,6 +13,7 @@ import com.github.skykai.stickercamera.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stickercamera.app.model.Addon;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,11 +23,14 @@ import java.util.List;
  */
 public class StickerToolAdapter extends BaseAdapter {
 
-    List<Addon> filterUris;
+    List<Addon> filterUris = new ArrayList<Addon>();
     Context     mContext;
 
     public StickerToolAdapter(Context context, List<Addon> effects) {
-        filterUris = effects;
+        filterUris.clear();
+        for(int i = 0; i < effects.size(); i++){
+            filterUris.add(effects.get(i));
+        }
         mContext = context;
     }
 
@@ -53,7 +57,7 @@ public class StickerToolAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(R.layout.item_bottom_tool, null);
             holder = new EffectHolder();
             holder.logo = (ImageView) convertView.findViewById(R.id.effect_image);
-            holder.container = (ImageView) convertView.findViewById(R.id.effect_background);
+            //holder.container = (ImageView) convertView.findViewById(R.id.effect_background);
             //holder.navImage.setOnClickListener(holder.clickListener);
             convertView.setTag(holder);
         } else {
@@ -67,15 +71,15 @@ public class StickerToolAdapter extends BaseAdapter {
 
     private View showItem(View convertView, EffectHolder holder, final Addon sticker) {
 
-        holder.container.setVisibility(View.GONE);
-        ImageLoaderUtils.displayDrawableImage(sticker.getId() + "", holder.logo, null);
-
+        //holder.container.setVisibility(View.GONE);
+        holder.logo.setImageResource(sticker.getId());
+        //ImageLoaderUtils.displayDrawableImage(sticker.getId() + "", holder.logo, null);
         return convertView;
     }
 
     class EffectHolder {
         ImageView logo;
-        ImageView container;
+        //ImageView container;
     }
 
 }

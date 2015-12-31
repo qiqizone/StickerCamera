@@ -60,6 +60,7 @@ public class CommonTitleBar extends RelativeLayout {
     }
 
     protected void onFinishInflate() {
+        super.onFinishInflate();
         if (isInEditMode()) {
             return;
         }

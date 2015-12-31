@@ -10,7 +10,8 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:gravity="center"
-        android:background="@drawable/bottom_tool" >
+        android:background="@drawable/bottom_tool"
+        android:visibility="gone">
 
         <jp.co.cyberagent.android.gpuimage.GPUImageView
             android:id="@+id/small_filter"
